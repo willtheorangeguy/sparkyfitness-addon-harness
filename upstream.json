@@ -1,0 +1,8 @@
+{
+  "verified_on": "2026-10-20",
+  "source": "https://github.com/CodeWithCJ/SparkyFitness",
+  "revision": "28d32d8536877d765ad03ca3727409c679b847a7",
+  "version": "v1.8.0",
+  "server_image": "codewithcj/sparkyfitness_server@sha256:001f173ef46aeb40882516a5f14db73180517b051a82e551c98db48b9263d9e6",
+  "frontend_image": "codewithcj/sparkyfitness@sha256:d67af4087e9bb3ca8c462225c0bba7a83517dfe404aa9e347885fd6d2a4f5d4c"
+}

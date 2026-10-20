@@ -1,0 +1,121 @@
+name: ${COMPOSE_PROJECT_NAME}
+services:
+  db:
+    image: postgres:18.3-alpine
+    environment:
+      POSTGRES_DB: sparkyfitness
+      POSTGRES_USER: sparky
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes: [database:/var/lib/postgresql]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U sparky -d sparkyfitness']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  server:
+    image: codewithcj/sparkyfitness_server@sha256:001f173ef46aeb40882516a5f14db73180517b051a82e551c98db48b9263d9e6
+    environment:
+      SPARKY_FITNESS_DB_HOST: db
+      SPARKY_FITNESS_DB_PORT: '5432'
+      SPARKY_FITNESS_DB_NAME: sparkyfitness
+      SPARKY_FITNESS_DB_USER: sparky
+      SPARKY_FITNESS_DB_PASSWORD: ${DB_PASSWORD}
+      SPARKY_FITNESS_APP_DB_USER: sparky_app
+      SPARKY_FITNESS_APP_DB_PASSWORD: ${APP_DB_PASSWORD}
+      SPARKY_FITNESS_FRONTEND_URL: ${PUBLIC_URL}
+      SPARKY_FITNESS_EXTRA_TRUSTED_ORIGINS: http://server:3010
+      SPARKY_FITNESS_API_ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      BETTER_AUTH_SECRET: ${SECRET_KEY}
+      SPARKY_FITNESS_ADMIN_EMAIL: ${DEMO_EMAIL}
+      SPARKY_FITNESS_SERVER_PORT: '3010'
+      SPARKY_FITNESS_DISABLE_SIGNUP: 'false'
+      SPARKY_FITNESS_SIGN_IN_RATELIMIT_MAX: '100'
+      SPARKY_FITNESS_API_KEY_RATELIMIT_MAX_REQUESTS: '10000'
+      SPARKY_FITNESS_LOG_LEVEL: INFO
+      NODE_ENV: production
+      TZ: UTC
+    volumes:
+      - uploads:/app/SparkyFitnessServer/uploads
+      - backup:/app/SparkyFitnessServer/backup
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3010/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 15s
+      start_period: 120s
+      retries: 60
+
+  frontend:
+    image: codewithcj/sparkyfitness@sha256:d67af4087e9bb3ca8c462225c0bba7a83517dfe404aa9e347885fd6d2a4f5d4c
+    environment:
+      SPARKY_FITNESS_FRONTEND_URL: ${PUBLIC_URL}
+      SPARKY_FITNESS_SERVER_HOST: server
+      SPARKY_FITNESS_SERVER_PORT: '3010'
+      NGINX_RATE_LIMIT: 100r/s
+    ports: ['127.0.0.1:${APP_PORT}:80']
+    depends_on:
+      server: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, 'http://127.0.0.1/']
+      interval: 5s
+      timeout: 10s
+      retries: 30
+
+  seed:
+    image: python:3.12.13-alpine
+    profiles: [tools]
+    working_dir: /harness
+    command: [python, seed.py]
+    environment:
+      APP_URL: http://server:3010
+      PUBLIC_URL: ${PUBLIC_URL}
+      DEMO_EMAIL: ${DEMO_EMAIL}
+      DEMO_PASSWORD: ${DEMO_PASSWORD}
+      SEED_END_DATE: ${SEED_END_DATE:-}
+      PYTHONDONTWRITEBYTECODE: '1'
+    volumes:
+      - ./scripts:/harness:ro
+      - ./runtime:/runtime
+    depends_on:
+      server: {condition: service_healthy}
+
+
+  example-addon:
+    image: python:3.12.13-alpine
+    profiles: [addon]
+    working_dir: /harness/scripts
+    command: [python, addon.py]
+    environment: &runner-env
+      TARGET: sparkyfitness
+      APP_URL: http://server:3010
+      PUBLIC_URL: ${PUBLIC_URL}
+      PYTHONPATH: /harness/scripts
+      PYTHONDONTWRITEBYTECODE: '1'
+    volumes:
+      - ./scripts:/harness/scripts:ro
+      - ./runtime:/runtime:ro
+    ports:
+      - '127.0.0.1:${ADDON_PORT}:8080'
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://localhost:8080/', timeout=10)"]
+      interval: 5s
+      timeout: 15s
+      retries: 12
+
+  test:
+    image: python:3.12.13-alpine
+    profiles: [tools]
+    environment: *runner-env
+    command: [python, /harness/tests/test_harness.py]
+    volumes:
+      - ./scripts:/harness/scripts:ro
+      - ./tests:/harness/tests:ro
+      - ./runtime:/runtime:ro
+      - ./reports:/reports
+
+volumes:
+  database:
+  uploads:
+  backup:
