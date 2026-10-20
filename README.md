@@ -16,7 +16,11 @@ Application: http://localhost:8102
 
 Example addon JSON: http://localhost:9102
 
-Login: **demo@example.test** / **HarnessDemo123!**
+Demo email: **`demo@example.test`**
+
+Demo password: **`HarnessDemo123!`**
+
+These are the default credentials. If you change `DEMO_PASSWORD` in `.env`, use that value instead.
 
 The first command creates a local `.env` with generated service secrets, waits for
 application readiness, seeds data, then starts the example addon. First startup may
@@ -46,7 +50,21 @@ copying this repo. Reset operates on that project, so never reuse a production n
 
 ## Sample scenario
 
-A demo user, 14 daily weight/waist/step check-ins, three custom foods, 42 breakfast/lunch/dinner diary entries, 14 days of water intake, and seven walking workouts. The demo email is configured as the local administrator.
+### Workout data
+
+Log in with the demo email and open the exercise diary. **Six strength training
+days** each contain **Harness Barbell Squat**, **Harness Bench Press**, and
+**Harness Bent-over Row**, with three sets of ten reps per exercise: **18 exercise
+entries and 54 logged strength sets**. Weights increase by 2.5 kg per session, and
+sets include completion times, rest intervals, and effort ratings. Seven walking
+workouts are also included.
+
+Strength workout dates are 12, 10, 8, 5, 3 and 0 days before the fixture's end date,
+recorded in `runtime/credentials.json`. Select that end date in the diary to see
+the latest three strength exercises and a walk. Run `python harness.py seed` to
+add the strength fixtures to an existing harness without resetting its database.
+
+A demo user, six strength training days with 54 sets, seven walking workouts, 14 daily weight/waist/step check-ins, three custom foods, 42 breakfast/lunch/dinner diary entries, and 14 days of water intake. The demo email is configured as the local administrator.
 
 The history ends on the first seed date and remains anchored on normal reruns.
 For a fixed date, set `SEED_END_DATE=2026-10-20` before the first `up`.
