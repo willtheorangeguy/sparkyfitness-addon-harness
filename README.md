@@ -57,7 +57,7 @@ Runs the upstream [SparkyFitness](https://github.com/CodeWithCJ/SparkyFitness) a
 
 ## Support
 
-Open a [GitHub Discussion](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/discussions/new) or file an [issue](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/issues/new/choose).
+Open an [issue](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/issues/new/choose).
 
 ## Contributing
 

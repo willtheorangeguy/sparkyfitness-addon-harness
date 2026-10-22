@@ -35,4 +35,4 @@ Open `http://localhost:8102` for the app and `http://localhost:9102` for addon J
 
 ## Support
 
-Open a [discussion](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/discussions/new) or an [issue](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/issues/new/choose).
+Open an [issue](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/issues/new/choose).
