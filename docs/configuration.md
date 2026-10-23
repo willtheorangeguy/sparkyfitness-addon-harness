@@ -50,3 +50,9 @@ SEED_END_DATE=2026-10-20
 ```
 
 The [full environment template](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/blob/HEAD/.env.example) includes the remaining required values. Changing a project's name selects different volumes rather than migrating existing data.
+
+## Test controls
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `CHECK_EXAMPLE_ADDON` | boolean | `true` | Set `false` for a custom addon API; retains application and supplied-template checks. |

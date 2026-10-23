@@ -30,4 +30,4 @@ The internal origin is `http://server:3010`. Use the `api_key` from the runtime 
 
 The client sends `PUBLIC_URL` as its Origin header. Health readiness uses `/api/health` on the server. Private source requests without credentials are expected to fail with HTTP 401 or 403 in the tests.
 
-For a live contract, inspect the pinned upstream application. The fixture's [client](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/blob/HEAD/scripts/client.py) and [tests](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/blob/HEAD/tests/test_harness.py) show the exact consumed routes and assertions.
+For a live contract, inspect the pinned upstream application. The fixture's [client](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/blob/HEAD/scripts/client.py) and [tests](https://github.com/willtheorangeguy/sparkyfitness-addon-harness/blob/HEAD/tests/integration/test_platform.py) show the exact consumed routes and assertions.
