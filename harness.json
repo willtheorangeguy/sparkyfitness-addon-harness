@@ -1,0 +1,18 @@
+{
+  "platform": "sparkyfitness",
+  "services": [
+    "db",
+    "server",
+    "frontend"
+  ],
+  "restart_services": [
+    "server",
+    "frontend"
+  ],
+  "build_services": [],
+  "seed_mode": "api",
+  "generated_dirs": [
+    "runtime",
+    "reports"
+  ]
+}
