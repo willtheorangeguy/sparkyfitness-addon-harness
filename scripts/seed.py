@@ -5,6 +5,9 @@ import os
 from pathlib import Path
 from client import API
 
+# State contains demo passwords and API tokens; keep it within the shared group.
+os.umask(0o007)
+
 state_file = Path('/runtime/seed-state.json')
 state = json.loads(state_file.read_text()) if state_file.exists() else {'done': {}, 'catalog': {}}
 state.setdefault('end_date', os.environ.get('SEED_END_DATE') or date.today().isoformat())
@@ -30,6 +33,7 @@ if not creds.get('api_key'):
     creds['api_key'] = key['apiKey']['key']
 creds.update(email=email, password=password, end_date=str(end), start_date=str(end-timedelta(days=13)))
 cred_file.write_text(json.dumps(creds, indent=2))
+cred_file.chmod(0o660)
 api.credentials = creds
 
 foods = [('Harness Oatmeal', 160, 6, 27, 3, 'breakfast'),
